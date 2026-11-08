@@ -1,0 +1,306 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTML 50 Quiz</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:linear-gradient(135deg,#10172e,#202c52);
+ color:white;
+ min-height:100vh;
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ padding:20px;
+}
+.container{
+ width:100%;
+ max-width:750px;
+ background:#18233e;
+ border:1px solid #34446b;
+ border-radius:20px;
+ padding:30px;
+ box-shadow:0 15px 50px #0006;
+}
+h1{text-align:center;color:#60d5ff}
+.subtitle{text-align:center;color:#aebbd7}
+.top{
+ display:flex;
+ justify-content:space-between;
+ margin:20px 0;
+ color:#60d5ff;
+ font-weight:bold;
+}
+.progress{
+ height:9px;
+ background:#34446b;
+ border-radius:20px;
+ overflow:hidden;
+}
+#bar{
+ height:100%;
+ width:0;
+ background:#38d9a9;
+ transition:.3s;
+}
+.question{
+ font-size:21px;
+ margin:30px 0 20px;
+}
+.option{
+ display:block;
+ width:100%;
+ padding:15px;
+ margin:12px 0;
+ border:2px solid #405173;
+ background:#243352;
+ color:white;
+ text-align:left;
+ border-radius:10px;
+ cursor:pointer;
+ font-size:16px;
+ transition:.2s;
+}
+.option:hover:not(:disabled){
+ background:#304c75;
+ border-color:#60d5ff;
+}
+.option:disabled{cursor:not-allowed;opacity:1}
+.correct{background:#126a4d!important;border-color:#38d9a9!important}
+.wrong{background:#842f3e!important;border-color:#ff6578!important}
+button.main{
+ padding:13px 25px;
+ background:#38d9a9;
+ border:0;
+ border-radius:10px;
+ font-size:16px;
+ font-weight:bold;
+ cursor:pointer;
+ color:#102438;
+ margin-top:15px;
+}
+button.main:hover{background:#62f0c4}
+#next{display:none;float:right}
+#feedback{margin-top:15px;min-height:25px}
+#result{text-align:center;display:none}
+.score{font-size:55px;color:#38d9a9;font-weight:bold}
+.small{color:#aebbd7}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<div id="quiz">
+<h1>💻 HTML 50 Quiz</h1>
+<p class="subtitle">Test Your HTML Knowledge</p>
+
+<div class="top">
+<span id="number">Question 1/50</span>
+<span id="timer">⏱ 00:00</span>
+<span id="points">Score: 0</span>
+</div>
+
+<div class="progress"><div id="bar"></div></div>
+
+<div class="question" id="question"></div>
+<div id="options"></div>
+<div id="feedback"></div>
+
+<button class="main" id="next" onclick="nextQuestion()">Next →</button>
+</div>
+
+<div id="result">
+<h1>🎉 Quiz Completed!</h1>
+<p>Your Final Score</p>
+<div class="score" id="finalScore">0/50</div>
+<h2 id="message"></h2>
+<p class="small" id="percentage"></p>
+<button class="main" onclick="restart()">🔄 Restart Quiz</button>
+</div>
+
+</div>
+
+<script>
+const questions = [
+["What does HTML stand for?",["Hyper Text Markup Language","High Text Machine Language","Hyper Tool Multi Language","Home Text Markup Language"],0],
+["Which tag creates a heading?",["<head>","<h1>","<heading>","<title>"],1],
+["Which tag creates a paragraph?",["<p>","<para>","<text>","<pg>"],0],
+["Which tag creates a hyperlink?",["<link>","<a>","<href>","<url>"],1],
+["Which attribute specifies a link destination?",["src","alt","href","link"],2],
+["Which tag inserts an image?",["<image>","<pic>","<img>","<photo>"],2],
+["Which attribute specifies an image path?",["href","src","alt","path"],1],
+["Which tag creates a line break?",["<break>","<br>","<lb>","<hr>"],1],
+["Which tag creates a horizontal line?",["<line>","<hr>","<br>","<hl>"],1],
+["Which tag creates an unordered list?",["<ol>","<li>","<ul>","<list>"],2],
+["Which tag creates an ordered list?",["<ul>","<ol>","<li>","<order>"],1],
+["Which tag defines a list item?",["<item>","<li>","<ul>","<list>"],1],
+["Which tag makes text bold semantically?",["<b>","<strong>","<bold>","<big>"],1],
+["Which tag makes text italic semantically?",["<i>","<em>","<italic>","<it>"],1],
+["Which tag creates a table?",["<table>","<tab>","<tr>","<td>"],0],
+["Which tag defines a table row?",["<td>","<th>","<tr>","<row>"],2],
+["Which tag defines a table cell?",["<td>","<tr>","<tc>","<cell>"],0],
+["Which tag defines a table header cell?",["<thead>","<th>","<header>","<td>"],1],
+["Which tag creates a form?",["<input>","<form>","<fieldset>","<data>"],1],
+["Which tag creates a text input?",["<text>","<input>","<textbox>","<field>"],1],
+["Which input type creates a password field?",["text","hidden","password","secure"],2],
+["Which tag creates a button?",["<btn>","<button>","<click>","<inputbutton>"],1],
+["Which attribute gives an element a unique identifier?",["class","name","id","style"],2],
+["Which attribute can assign a CSS class?",["id","class","css","type"],1],
+["Which tag contains metadata?",["<body>","<meta>","<head>","<footer>"],2],
+["Which tag sets the browser tab title?",["<title>","<h1>","<name>","<header>"],0],
+["Which declaration defines HTML5?",["<html5>","<!DOCTYPE html>","<doctype>","<html version='5'>"],1],
+["Which tag contains visible page content?",["<head>","<body>","<meta>","<title>"],1],
+["Which tag defines navigation links?",["<nav>","<navigate>","<menuitem>","<links>"],0],
+["Which tag defines the main page content?",["<content>","<main>","<section>","<body>"],1],
+["Which tag defines a footer?",["<bottom>","<footer>","<end>","<foot>"],1],
+["Which tag defines a section?",["<section>","<div>","<part>","<article>"],0],
+["Which tag defines an independent article?",["<section>","<article>","<aside>","<main>"],1],
+["Which tag adds a video?",["<movie>","<media>","<video>","<mp4>"],2],
+["Which tag adds audio?",["<sound>","<audio>","<music>","<mp3>"],1],
+["Which attribute provides alternative image text?",["title","src","alt","text"],2],
+["Which tag is used for internal CSS?",["<css>","<style>","<script>","<design>"],1],
+["Which tag links an external CSS file?",["<css>","<style>","<link>","<script>"],2],
+["Which tag adds JavaScript?",["<javascript>","<script>","<js>","<code>"],1],
+["Which tag creates a dropdown list?",["<select>","<dropdown>","<optionlist>","<input>"],0],
+["Which tag defines an option in a dropdown?",["<select>","<choice>","<option>","<item>"],2],
+["Which attribute makes an input mandatory?",["validate","required","must","check"],1],
+["Which attribute opens a link in a new tab?",["target='_blank'","new='tab'","open='new'","tab='1'"],0],
+["Which tag is used for a comment?",["// comment","/* comment */","<!-- comment -->","# comment"],2],
+["Which tag defines a description list?",["<dl>","<ol>","<ul>","<list>"],0],
+["Which tag defines a term in a description list?",["<dd>","<dt>","<dl>","<term>"],1],
+["Which tag defines the description of a term?",["<dt>","<dd>","<dl>","<desc>"],1],
+["Which attribute sets an input's initial value?",["default","value","text","data"],1],
+["Which tag represents highlighted text?",["<mark>","<highlight>","<strong>","<light>"],0],
+["Which tag defines a figure caption?",["<caption>","<figcaption>","<description>","<label>"],1]
+];
+
+let current=0;
+let score=0;
+let selected=false;
+let seconds=0;
+let timerInterval;
+let answers=[];
+
+function startTimer(){
+ clearInterval(timerInterval);
+ timerInterval=setInterval(()=>{
+ seconds++;
+ let m=String(Math.floor(seconds/60)).padStart(2,"0");
+ let s=String(seconds%60).padStart(2,"0");
+ document.getElementById("timer").textContent="⏱ "+m+":"+s;
+ },1000);
+}
+
+function loadQuestion(){
+ selected=false;
+ const q=questions[current];
+
+ document.getElementById("number").textContent=
+ "Question "+(current+1)+"/50";
+
+ document.getElementById("points").textContent="Score: "+score;
+ document.getElementById("question").textContent=q[0];
+ document.getElementById("bar").style.width=
+ (current/questions.length*100)+"%";
+
+ document.getElementById("feedback").textContent="";
+ document.getElementById("next").style.display="none";
+
+ const box=document.getElementById("options");
+ box.innerHTML="";
+
+ q[1].forEach((option,index)=>{
+  const btn=document.createElement("button");
+  btn.className="option";
+  btn.textContent=String.fromCharCode(65+index)+". "+option;
+  btn.onclick=()=>checkAnswer(index);
+  box.appendChild(btn);
+ });
+}
+
+function checkAnswer(index){
+ if(selected)return;
+ selected=true;
+
+ const q=questions[current];
+ const buttons=document.querySelectorAll(".option");
+
+ buttons.forEach((btn,i)=>{
+  btn.disabled=true;
+  if(i===q[2])btn.classList.add("correct");
+  else if(i===index)btn.classList.add("wrong");
+ });
+
+ if(index===q[2]){
+  score++;
+  answers.push(true);
+  document.getElementById("feedback").textContent="✅ Correct Answer!";
+  document.getElementById("feedback").style.color="#38d9a9";
+ }else{
+  answers.push(false);
+  document.getElementById("feedback").textContent=
+  "❌ Wrong! Correct answer: "+q[1][q[2]];
+  document.getElementById("feedback").style.color="#ff6578";
+ }
+
+ document.getElementById("points").textContent="Score: "+score;
+ document.getElementById("next").style.display="inline-block";
+ document.getElementById("next").textContent=
+ current===49?"Finish Quiz":"Next →";
+}
+
+function nextQuestion(){
+ if(!selected)return;
+
+ current++;
+
+ if(current<questions.length){
+  loadQuestion();
+ }else{
+  finishQuiz();
+ }
+}
+
+function finishQuiz(){
+ clearInterval(timerInterval);
+ document.getElementById("quiz").style.display="none";
+ document.getElementById("result").style.display="block";
+
+ const percent=Math.round(score/50*100);
+
+ document.getElementById("finalScore").textContent=score+"/50";
+ document.getElementById("percentage").textContent=
+ "Percentage: "+percent+"%";
+
+ document.getElementById("message").textContent=
+ percent>=80?"🏆 Excellent! HTML Master":
+ percent>=60?"👏 Good Job!":
+ percent>=40?"👍 Keep Practicing!":
+ "📚 Study HTML and Try Again!";
+ document.getElementById("bar").style.width="100%";
+}
+
+function restart(){
+ current=0;
+ score=0;
+ seconds=0;
+ answers=[];
+ document.getElementById("quiz").style.display="block";
+ document.getElementById("result").style.display="none";
+ document.getElementById("timer").textContent="⏱ 00:00";
+ loadQuestion();
+ startTimer();
+}
+
+loadQuestion();
+startTimer();
+</script>
+</body>
+</html>
